@@ -1,1 +1,5 @@
-https://drive.google.com/drive/folders/1zLjiM6hhYa8nO5G2XS7_O5LmC2C_7MRB?usp=sharing
+TODO
+
+Данные содержат две колонки: таргет (0 -- отрицательная, 1 -- положительная тональность) и текст твита. Таргет распределен примерно как 49.8/50.2.
+
+Ссылка на данные: https://drive.google.com/drive/folders/1zLjiM6hhYa8nO5G2XS7_O5LmC2C_7MRB?usp=sharing
