@@ -5,6 +5,7 @@
 * feeling - бинарная переменная, равная 1, если твит положительного настроения, и 0, если твит негативного настроения.
 
 Автор датасета - Miguel Carlos Blanco Cacharrón (https://huggingface.co/carblacac).
+
 Ссылка на данные: https://drive.google.com/drive/folders/1zLjiM6hhYa8nO5G2XS7_O5LmC2C_7MRB?usp=sharing
 
 ### Источники набора данных:
