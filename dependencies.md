@@ -1,3 +1,4 @@
+```
 import pandas as pd
 import re
 from collections import Counter
@@ -64,3 +65,4 @@ def plot_wordcloud(freq_dist, title):
     plt.axis("off")
     plt.title(title)
     plt.show()
+```
