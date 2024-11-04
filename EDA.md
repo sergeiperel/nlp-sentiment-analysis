@@ -21,7 +21,7 @@
 10. проанализирована значимость слов в тексте с помощью методов TF-IDF и word2vec и снижена размерность данных с помощью метода t-SNE;
 11. построены эмбеддинги для твитов с помощью tf-IDF и word2vec, проанализировали полученные эмеддинги с помощью визуального анализа, для этого снизили размерность с помощью t-SNE
 12. на основе анализа облаков слов и n-грамм выяснено:
-   - самые популярные слова в позитивных твитах - love, thank, good, day, like и пр., в негативных твитах - work, bad, cant, hate, sorry и пр.;
-   - наиболее часто встречаемые биграммы в позитивных твитах - cant wait, good morning, im going, в негативных твитах - last night, feel like, im sorry;
-   - наиболее часто встречаемые триграммы в позитивных твитах - cant wait see, happy mother day, get follower day, в негативных твитах - im gonna miss, dont want go, wish could go.
+    - самые популярные слова в позитивных твитах - love, thank, good, day, like и пр., в негативных твитах - work, bad, cant, hate, sorry и пр.;
+    - наиболее часто встречаемые биграммы в позитивных твитах - cant wait, good morning, im going, в негативных твитах - last night, feel like, im sorry;
+    - наиболее часто встречаемые триграммы в позитивных твитах - cant wait see, happy mother day, get follower day, в негативных твитах - im gonna miss, dont want go, wish could go.
   
