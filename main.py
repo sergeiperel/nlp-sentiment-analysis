@@ -1,11 +1,12 @@
 from fastapi import FastAPI
 import joblib
+import pickle
 from typing import List, Dict, Any
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from catboost import CatBoostClassifier
 from transformers import AutoModelForTokenClassification, AutoTokenizer
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from pydantic import BaseModel
 import time
 import concurrent.futures
@@ -32,6 +33,10 @@ class ModelInfo(BaseModel):
     path: str
     status: str
 
+class TrainingData(BaseModel):
+    model_name: str
+    features: list
+    target: int
 class TrainParams(BaseModel):
     learning_rate: float
     batch_size: int
@@ -59,11 +64,17 @@ class PredictInput(BaseModel):
     model_name: str
     features: List[float]
 
-async def load_model():
-    global model, tokenizer
-    # Загрузка предобученной модели и токенизатора
-    model_name = "distilbert-base-uncased"
-    model = AutoModelForTokenClassification.from_pretrained(model_name, num_labels=2)
+def load_model():
+    global model
+    with open("dt.pkl", "rb") as f:  # Замените на путь к вашей модели
+        model = pickle.load(f)
+
+
+#async def load_model():
+#    global model, tokenizer
+#    # Загрузка предобученной модели и токенизатора
+#    model_name = "distilbert-base-uncased"
+#    model = AutoModelForTokenClassification.from_pretrained(model_name, num_labels=2)
 
 #async def lifespan(app: FastAPI):
 #    await load_model()
@@ -73,6 +84,10 @@ async def load_model():
 #    tokenizer = None
 #lifespan=lifespan
 app = FastAPI()
+
+@app.on_event("startup")
+def startup_event():
+    load_model()
 
 @app.get("/")
 async def home():
@@ -135,22 +150,26 @@ class PredictionInput(BaseModel):
     features: list
 
 @app.post("/predict/")
-async def predict(input_data: PredictInput):
-    model_name = input_data.model_name
+async def predict(file: UploadFile = File(...)):
+    contents = await file.read()
+    data = pickle.loads(contents)
+
+    prediction = model.predict(data)
+    #model_name = input_data.model_name
 
     # Проверка, загружена ли модель
-    if model_name not in models_info:
-        raise HTTPException(status_code=404, detail=f"Модель {model_name} не найдена.")
+    #if model_name not in models_info:
+    #   raise HTTPException(status_code=404, detail=f"Модель {model_name} не найдена.")
 
-    model = models_info[model_name]
+    #model = models_info[model_name]
 
     # Преобразование входных данных в массив NumPy
-    features_array = np.array(input_data.features).reshape(1, -1)
+    #features_array = np.array(input_data.features).reshape(1, -1)
 
     # Получение предсказания
-    prediction = model.predict(features_array)
+    #prediction = model.predict(features_array)
 
-    return {"model_name": model_name, "prediction": prediction.tolist()}
+    return {"prediction": prediction.tolist()}
 
 
 @app.get("/models/", response_model=Dict[str, ModelInfoResponse])
@@ -160,16 +179,16 @@ async def get_models():
 
     return {model_name: ModelInfoResponse(**info) for model_name, info in models_info.items()}
 # Функция для загрузки модели и сохранения информации о ней
-def load_model(model_name: str, model_path: str):
-    try:
-        model = joblib.load(model_path)
-        models_info[model_name] = {
-            "path": model_path,
-            "status": "loaded"
-        }
-        return model
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+#def load_model(model_name: str, model_path: str):
+#    try:
+#        model = joblib.load(model_path)
+#        models_info[model_name] = {
+#            "path": model_path,
+#            "status": "loaded"
+#        }
+#        return model
+#    except Exception as e:
+#        raise HTTPException(status_code=500, detail=str(e))
 
 # Пример загрузки моделей (замените на ваши пути)
 #load_model("model1", "model1.pkl")
@@ -184,3 +203,24 @@ async def set_active_model(input_data: SetActiveModelInput):
         return {"message": f"Active model set to {active_model_id}"}
     else:
         raise HTTPException(status_code=404, detail="Model not found")
+
+@app.post("/retrain/")
+async def retrain(data: TrainingData):
+    # Проверка на существование модели
+    if data.model_name not in models_info:
+        raise HTTPException(status_code=404, detail="Модель не найдена")
+    # Проверка на корректность размера входных данных
+    if len(data.features) != model.n_features_in_:
+        raise HTTPException(status_code=400, detail="Неверное количество признаков")
+
+    # Подготовка данных для дообучения
+    X_new = np.array(data.features).reshape(1, -1)  # превращаем в 2D массив
+    y_new = np.array([data.target])  # целевая метка
+
+    # Дообучение модели
+    model.fit(X_new, y_new)
+
+    # Сохранение обновленной модели
+    joblib.dump(model, 'model.pkl')
+
+    return {"message": "Модель успешно дообучена"}
