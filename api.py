@@ -4,14 +4,25 @@ import joblib
 
 app = FastAPI()
 
+models_info = {
+    "DecisionTreeClassifier": joblib.load('dt.pkl')
+}
+X = joblib.load('X.pkl')
+
 
 @app.post('/predict/DecisionTree')
-async def predict(data: List[float]):
+async def predict():
 
-    model = joblib.load("models/DecisionTree.pkl")
-
-    prediction = model.predict([data])[0]
+    prediction = models_info["DecisionTreeClassifier"].predict(X)
     return prediction
+
+
+@app.get("/")
+async def home():
+    return {"message": "Сервер запущен, модель загружена."}
+
+
+
 
 
 @app.post('/predict/LogisticRegression')

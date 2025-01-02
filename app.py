@@ -138,12 +138,17 @@ def main():
 
         if st.button("Predict"):
 
-            response = requests.post(API_URL + f"/{model_file}")
+            response = requests.post(API_URL + f"/predict/{model_file}")
             st.write(f"Prediction: {response.json()}")
+
+            if response.status_code == 200:
+                st.success(response.json())
+            else:
+                st.error("Ошибка при предсказании")
 
         if st.button("Fit"):
 
-            response = requests.post(API_URL + f"http://localhost:8000/fit/{model_file}", json=params)
+            response = requests.post(API_URL + f"/fit/{model_file}", json=params)
 
             if response.status_code == 200:
                 st.success(response.json())

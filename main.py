@@ -20,7 +20,12 @@ tokenizer = None
 
 
 # Словарь для хранения информации о моделях
-models_info = {}
+models_info = {
+    "DecisionTreeClassifier": joblib.load('dt.pkl')
+}
+
+X = joblib.load('X.pkl')
+
 class SetActiveModelInput(BaseModel):
     model_id: str
 
@@ -149,27 +154,36 @@ async def fit_model(input_data: FitModelInput):
 class PredictionInput(BaseModel):
     features: list
 
-@app.post("/predict/")
-async def predict(file: UploadFile = File(...)):
-    contents = await file.read()
-    data = pickle.loads(contents)
+@app.post("/predict/{model_name}")
+async def predict(model_name: str):
+    if model_name == "DecisionTree":
+        return models_info["DecisionTreeClassifier"].predict(X)
 
-    prediction = model.predict(data)
-    #model_name = input_data.model_name
 
+
+
+# @app.post("/predict/")
+# async def predict(file: UploadFile = File(...)):
+#     contents = await file.read()
+#     data = pickle.loads(contents)
+#
+#     prediction = model.predict(data)
+
+    # model_name = input_data.model_name
+    #
     # Проверка, загружена ли модель
-    #if model_name not in models_info:
+    # if model_name not in models_info:
     #   raise HTTPException(status_code=404, detail=f"Модель {model_name} не найдена.")
-
-    #model = models_info[model_name]
-
+    #
+    # model = models_info[model_name]
+    #
     # Преобразование входных данных в массив NumPy
-    #features_array = np.array(input_data.features).reshape(1, -1)
-
+    # features_array = np.array(input_data.features).reshape(1, -1)
+    #
     # Получение предсказания
-    #prediction = model.predict(features_array)
+    # prediction = model.predict(features_array)
 
-    return {"prediction": prediction.tolist()}
+    # return {"prediction": prediction.tolist()}
 
 
 @app.get("/models/", response_model=Dict[str, ModelInfoResponse])
