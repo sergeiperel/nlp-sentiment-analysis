@@ -31,6 +31,6 @@
    * precision (точность);
    * recall (полнота);
    * f1-мера;
-   * AUC (ROC) и AUC (PR). точность, полнота, F1, AUC (ROC) и AUC (PR) Посчитали и сравнили метрики, полученные для разных моделей и разных методов векторизаций (precision, recall, f1, ROC-AUC).
+   * кривые ROC-AUC и PR-AUC.
 
 ### Сервис на FastAPI и Streamlit-приложение
