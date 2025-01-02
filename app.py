@@ -24,7 +24,7 @@ st.sidebar.write(
 )
 
 
-API_URL = "http://localhost:8000/predict"
+API_URL = "http://localhost:8000"
 
 
 models = {
@@ -34,6 +34,7 @@ models = {
 
 }
 
+penalty_logreg = {"l1": "l1", "l2" : "l2", "elasticnet" : "elasticnet", "none" : "none"}
 
 def main():
     df = pd.read_csv("data/elon_musk_tweets_labeled.csv").drop(['Unnamed: 0', 'id', 'user_created', 'hashtags', 'user_name', 'is_retweet'], axis=1)
@@ -121,10 +122,35 @@ def main():
 
         model_file = models[selected_model]
 
+        if model_file == 'CatBoost':
+            depth = st.slider("Глубина:", min_value=1, max_value=5)
+            learning_rate = st.slider("learning rate:", min_value=0.01, max_value=0.1)
+            params = {'depth': depth, 'learning_rate': learning_rate}
+        if model_file == 'LogisticRegression':
+            C = st.slider("C", min_value=0.01, max_value=10.0)
+            penalty = st.selectbox("Penalty:", penalty_logreg)
+            params = {'C': C, 'penalty': penalty}
+        if model_file == 'DecisionTree':
+            depth = st.slider("Глубина:", min_value=1, max_value=5)
+            min_samples_leaf = st.slider("min_samples_leaf:", min_value=1, max_value=5)
+            params = {"Глубина:": depth, "min_samples_leaf": min_samples_leaf}
+
+
         if st.button("Predict"):
 
             response = requests.post(API_URL + f"/{model_file}")
             st.write(f"Prediction: {response.json()}")
+
+        if st.button("Fit"):
+
+            response = requests.post(API_URL + f"http://localhost:8000/fit/{model_file}", json=params)
+
+            if response.status_code == 200:
+                st.success(response.json())
+            else:
+                st.error("Ошибка при обучении модели")
+
+
 
 
 if __name__ == "__main__":
