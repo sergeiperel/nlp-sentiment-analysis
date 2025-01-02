@@ -24,6 +24,20 @@
 13. наиболее часто встречаемые биграммы в позитивных твитах - next week, good question, coming soon, в негативных твитах - major problem, free speech, look like;
 14. наиболее часто встречаемые триграммы в позитивных твитах - entertaining outcome likely, make life multiplanetary, feel long ago, в негативных твитах - new york time, woke mind virus, medium clickseeking machine.
 
+__**[Streamlit-приложение можно посмотреть тут!](https://NOLINKHERE.streamlit.app/)**__
+
+### Запуск приложения локально
+
+Для запуска Streamlit локально непосредственно в корневой папке репозитория выполните следующее:
+
+```Командная строка
+$ python -m venv venv
+$ venv\Scripts\activate
+$ pip install -r requirements.txt
+$ streamlit run app.py
+```
+Откройте http://localhost:8501, чтобы просмотреть приложение.
+
 ### Участники проекта
 - Неволина Арина (@nevolinaa) - куратор проекта
 - Перелыгин Сергей (@sergeiperel)
