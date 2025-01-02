@@ -119,10 +119,3 @@ docker compose up -d
 - Копчев Владислав (@aefrt)
 - Шарова Елизавета (@lisaandreevna)
 
-### Участники проекта
-- Неволина Арина (@nevolinaa) - куратор проекта
-- Перелыгин Сергей (@sergeiperel)
-- Каменчук Николай (@Luckymannn)
-- Ларин Дмитрий (@FromTtoT)
-- Копчев Владислав (@aefrt)
-- Шарова Елизавета (@lisaandreevna)
