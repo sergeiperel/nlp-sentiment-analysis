@@ -1,7 +1,7 @@
 # Base image -- Python
 FROM python:3.11-slim
 
-# Working directory in outr container
+# Working directory in our container
 WORKDIR /app
 
 # Copy required files
@@ -10,8 +10,9 @@ COPY app.py app.py
 COPY api.py api.py
 
 # Install dependencies
+RUN apt-get update && apt-get install -y g++
 RUN pip install -r requirements.txt
 # TODO: nltk download etc. for preprocessing
 
 # Run when container starts
-CMD ["python", "app.py"]
+CMD streamlit run app.py
