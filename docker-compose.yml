@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  fastapi:
+    build:
+      context: ./backend
+    networks:
+      - app-network
+    ports:
+      - "8123:8123"
+
+  streamlit:
+    build:
+      context: ./frontend
+    networks:
+      - app-network
+    environment:
+      - FASTAPI_HOST=http://fastapi:8123
+    ports:
+      - "8501:8501"
+
+networks:
+  app-network:
+    driver: bridge
